@@ -1,4 +1,5 @@
 #include <string>
+#include "MyMap.h"
 
 using namespace std;
 
@@ -11,3 +12,4 @@ void preparar();
 string itemtostring(int);
 void relations();
 void itemManagement();
+void play(MyMap visualmap);
