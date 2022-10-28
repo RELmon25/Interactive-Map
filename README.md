@@ -2,7 +2,7 @@
 This is a project tha I designed for my class of Advanced Programming. Below is the link of the ejecution.
 
 
-https://drive.google.com/drive/u/1/recent
+https://drive.google.com/file/d/1IHxVX7plBM75XpqyUP1LXFCA0oJT190Y/view?usp=share_link
 
 ---
 
