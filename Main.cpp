@@ -1,19 +1,3 @@
-/*
-#include <iostream>
-#include <windows.h> 
-#include <stdio.h>
-#include <io.h>
-#include <fcntl.h>
-#include <wchar.h>
-#include <fcntl.h>
-#include <fstream>
-#include <stdlib.h>
-#include <sstream>
-#include <codecvt>
-#include <string>
-#include <vector>
-*/
-
 #include <iostream>
 #include <windows.h> 
 #include <fstream>
@@ -23,6 +7,7 @@
 #include <set>
 #include <cstdlib>
 #include "MyLib.h"
+#include "MyMap.h"
 
 using namespace std;
 
@@ -63,6 +48,34 @@ MyMap WC("WC");
 MyMap Laboratory("Laboratory");
 MyMap IT_Office("IT_Office");
 
+map<string,MyMap*> mapDirectory;
+
+void play(MyMap &visualmap){
+    system("CLS");
+    cout<<"\e[0mfind this item to add to your collection...\n"<<target.second<<"\n";
+    visualmap.ShowMap();
+    visualmap.menu();
+    int x;
+    cin>>x;
+    while(x<=0||x>visualmap.maximo+1){
+        cout<<"\tComando invalido\n\t\t\t\t_";
+        cin>>x;
+    }
+    if(x==visualmap.maximo+1) return;
+    if(visualmap.submaps.size()==0){
+        if(x == visualmap.ubicacion){
+            if(target.first == visualmap.item) ganaste();
+            else cout<<"\n"<<itemtostring(visualmap.item)<<"\n\tNo es lo que estas buscando...\n";
+        }
+        else cout<<"\n\tNo hay nada aqui, intenta otra vez...\n";
+    }
+    else{
+        if(x>visualmap.submaps.size()) play(*mapDirectory[visualmap.supermaps[0]]);
+        else play(*mapDirectory[visualmap.submaps[x-1]]);
+    }
+    return;
+}
+
 int main(){
     HANDLE handleOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD consoleMode;
@@ -99,7 +112,9 @@ int main(){
                 cin.ignore();
             }
             if(x==1){
-                play();
+                target = randomItem();
+                play(Mustreron);
+                system("PAUSE");
             }
         } while(x!=3);
     }
@@ -157,39 +172,121 @@ void showCollection(){
     }
 }
 
-void play(){
-    target = randomItem();
-    cout<<"Target item\n"<<target.second<<"\n";
-    int x;
-    cin>>x;
-    do{
-        Mustreron.ShowMap();
-        cout<<"\n\n\e[34m\t\t\t\t\t- Menu -\n";
-        cout<<"\t\t\t\t(1) Stokemere\n\t\t\t\t(2) Aeria\n\t\t\t\t(3) Shibotsu\n\t\t\t\t(4) Main Menu\n\t\t\t\t_";
-        if(x==4) return;
-        if(x==1){
-            do{
-                system("CLS");
-                cout<<"Target item\n"<<target.second<<"\n";
-                Stokemere.ShowMap();
-                cout<<"\n\n\e[34m\t\t\t\t\t- Menu -\n";
-                cout<<"\t\t\t\t(1) WitchTower\n\t\t\t\t(2) DarkForest\n\t\t\t\t(3) Village\n\t\t\t\t(4) Mustreron\n\t\t\t\t(5) Main Menu\n\t\t\t\t_";
-                if(x==4) break;
-                if(x==5) return;
-                if(x==1){
-                    do{
-                        system("CLS");
-                        cout<<"Target item\n"<<target.second<<"\n";
-                        WitchTower.ShowMap();
-                        cout<<"\n\n\e[34m\t\t\t\t\t- Menu -\n";
-                        cout<<"\t\t\t\t(1) Observatory\n\t\t\t\t(2) PotionsLab\n\t\t\t\t(3) Village\n\t\t\t\t(4) Main Menu\n\t\t\t\t_";
-                        if(x==4) break;
-                        if(x==5) return;
-                    }while(x<=0||x>=5);
-                }
-            }while(x<=0||x>=5);
-        }
-    }while(x<=0||x>=5)
+void ganaste(){
+    collectionSet.insert(target.first);
+    MyMap felicidades("Felicidades");
+    felicidades.ShowMap();
+    cout<<"\n"<<itemtostring<<"\n";
+    return;
+}
+
+void preparar(){
+    mapDirectory.insert({"Mustreron",&Mustreron});
+    mapDirectory.insert({"Stokemere",&Stokemere});
+    mapDirectory.insert({"WitchTower",&WitchTower});
+    mapDirectory.insert({"Observatory",&Observatory});
+    mapDirectory.insert({"PotionsLab",&PotionsLab});
+    mapDirectory.insert({"PumpkinGarden",&PumpkinGarden});
+    mapDirectory.insert({"DarkForest",&DarkForest});
+    mapDirectory.insert({"AppleField",&AppleField});
+    mapDirectory.insert({"MagicWaterfall",&MagicWaterfall});
+    mapDirectory.insert({"GrimMegalith",&GrimMegalith});
+    mapDirectory.insert({"Village",&Village});
+    mapDirectory.insert({"Scaffold",&Scaffold});
+    mapDirectory.insert({"WaterWell",&WaterWell});
+    mapDirectory.insert({"Graveyard",&Graveyard});
+    mapDirectory.insert({"Aeria",&Aeria});
+    mapDirectory.insert({"Garden",&Garden});
+    mapDirectory.insert({"Fountain",&Fountain});
+    mapDirectory.insert({"Flowers",&Flowers});
+    mapDirectory.insert({"Castle",&Castle});
+    mapDirectory.insert({"Tower",&Tower});
+    mapDirectory.insert({"ThroneRoom",&ThroneRoom});
+    mapDirectory.insert({"Ballroom",&Ballroom});
+    mapDirectory.insert({"Shibotsu",&Shibotsu});
+    mapDirectory.insert({"Temple",&Temple});
+    mapDirectory.insert({"Altar",&Altar});
+    mapDirectory.insert({"Backyard",&Backyard});
+    mapDirectory.insert({"Skyscraper",&Skyscraper});
+    mapDirectory.insert({"WC",&WC});
+    mapDirectory.insert({"Laboratory",&Laboratory});
+    mapDirectory.insert({"IT_Office",&IT_Office});
+    relations();
+    return;
+}
+
+void relations(){
+    Mustreron.addSub("Stokemere");
+    Mustreron.addSub("Aeria");
+    Mustreron.addSub("Shibotsu");
+    Stokemere.addSup("Mustreron");
+    Aeria.addSup("Mustreron");
+    Shibotsu.addSup("Mustreron");
+
+    Stokemere.addSub("WitchTower");
+    Stokemere.addSub("DarkForest");
+    Stokemere.addSub("Village");
+    WitchTower.addSup("Stokemere");
+    DarkForest.addSup("Stokemere");
+    Village.addSup("Stokemere");
+
+    WitchTower.addSub("Observatory");
+    WitchTower.addSub("PotionsLab");
+    WitchTower.addSub("PumpkinGarden");
+    Observatory.addSup("WitchTower");
+    PotionsLab.addSup("WitchTower");
+    PumpkinGarden.addSup("WitchTower");
+
+    DarkForest.addSub("AppleField");
+    DarkForest.addSub("MagicWaterfall");
+    DarkForest.addSub("GrimMegalith");
+    AppleField.addSup("DarkForest");
+    MagicWaterfall.addSup("DarkForest");
+    GrimMegalith.addSup("DarkForest");
+
+    Village.addSub("Scaffold");
+    Village.addSub("WaterWell");
+    Village.addSub("Graveyard");
+    Scaffold.addSup("Village");
+    WaterWell.addSup("Village");
+    Graveyard.addSup("Village");
+
+    Aeria.addSub("Garden");
+    Aeria.addSub("Castle");
+    Aeria.addSub("Fountain");
+    Garden.addSup("Aeria");
+    Castle.addSup("Aeria");
+    Fountain.addSup("Aeria");
+
+    Garden.addSub("Fountain");
+    Garden.addSub("Flowers");
+    Fountain.addSup("Garden");
+    Flowers.addSup("Garden");
+
+    Castle.addSub("Tower");
+    Castle.addSub("ThroneRoom");
+    Castle.addSub("Ballroom");
+    Tower.addSup("Castle");
+    ThroneRoom.addSup("Castle");
+    Ballroom.addSup("Castle");
+
+    Shibotsu.addSub("Temple");
+    Shibotsu.addSub("Skyscraper"); 
+    Temple.addSup("Shibotsu");
+    Skyscraper.addSup("Shibotsu");
+
+    Temple.addSub("Altar");
+    Temple.addSub("Backyard");
+    Altar.addSup("Temple");
+    Backyard.addSup("Temple");
+
+    Skyscraper.addSub("WC");
+    Skyscraper.addSub("Laboratory");
+    Skyscraper.addSub("IT_Office");
+    WC.addSup("Skyscraper");
+    Laboratory.addSup("Skyscraper");
+    IT_Office.addSup("Skyscraper");
+    return;
 }
 
 pair<int,string> randomItem(){
@@ -198,6 +295,13 @@ pair<int,string> randomItem(){
     do{
         x = rand() % 20+1;
     }while(collectionSet.count(x)>0);
+    s = itemtostring(x);
+    pair<int,string> p = {x,s};
+    return p;
+}
+
+string itemtostring(int x){
+    string s;
     ifstream file;
     string text;
     file.open("Collection.txt",ios::in);
@@ -219,6 +323,30 @@ pair<int,string> randomItem(){
     catch(MyException &e){
         cout<<e.what()<<endl;
     }
-    pair<int,string> p = {x,s};
-    return p;
+    return s;
+}
+
+void itemManagement(){
+    ifstream file;
+    string mapa, entero;
+    int x;
+    file.open("Relations.txt",ios::in);
+    try{
+        while(!file.eof()){
+            getline(file, mapa);
+            getline(file,entero);
+            x = stoi(entero);
+            (*mapDirectory[mapa]).item = x;
+            getline(file,entero);
+            x = stoi(entero);
+            (*mapDirectory[mapa]).ubicacion = x;
+            getline(file,entero);
+            x = stoi(entero);
+            (*mapDirectory[mapa]).maximo = x;
+        }
+        file.close();
+    }
+    catch(MyException &e){
+        cout<<e.what()<<endl;
+    }
 }
