@@ -7,7 +7,7 @@
 #include <set>
 #include <cstdlib>
 #include "MyLib.h"
-#include "MyMap.h"
+#include <thread>
 
 using namespace std;
 
@@ -50,32 +50,6 @@ MyMap IT_Office("IT_Office");
 
 map<string,MyMap*> mapDirectory;
 
-void play(MyMap &visualmap){
-    system("CLS");
-    cout<<"\e[0mfind this item to add to your collection...\n"<<target.second<<"\n";
-    visualmap.ShowMap();
-    visualmap.menu();
-    int x;
-    cin>>x;
-    while(x<=0||x>visualmap.maximo+1){
-        cout<<"\tComando invalido\n\t\t\t\t_";
-        cin>>x;
-    }
-    if(x==visualmap.maximo+1) return;
-    if(visualmap.submaps.size()==0){
-        if(x == visualmap.ubicacion){
-            if(target.first == visualmap.item) ganaste();
-            else cout<<"\n"<<itemtostring(visualmap.item)<<"\n\tNo es lo que estas buscando...\n";
-        }
-        else cout<<"\n\tNo hay nada aqui, intenta otra vez...\n";
-    }
-    else{
-        if(x>visualmap.submaps.size()) play(*mapDirectory[visualmap.supermaps[0]]);
-        else play(*mapDirectory[visualmap.submaps[x-1]]);
-    }
-    return;
-}
-
 int main(){
     HANDLE handleOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD consoleMode;
@@ -83,6 +57,9 @@ int main(){
     consoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     consoleMode |= DISABLE_NEWLINE_AUTO_RETURN;
     SetConsoleMode( handleOut, consoleMode);
+
+    preparar();
+    itemManagement();
     
     MyMap tittle("Tittle");
     string username;
@@ -114,7 +91,6 @@ int main(){
             if(x==1){
                 target = randomItem();
                 play(Mustreron);
-                system("PAUSE");
             }
         } while(x!=3);
     }
@@ -177,6 +153,7 @@ void ganaste(){
     MyMap felicidades("Felicidades");
     felicidades.ShowMap();
     cout<<"\n"<<itemtostring<<"\n";
+    system("PAUSE");
     return;
 }
 
@@ -330,7 +307,7 @@ void itemManagement(){
     ifstream file;
     string mapa, entero;
     int x;
-    file.open("Relations.txt",ios::in);
+    file.open("ItemUbication.txt",ios::in);
     try{
         while(!file.eof()){
             getline(file, mapa);
@@ -349,4 +326,34 @@ void itemManagement(){
     catch(MyException &e){
         cout<<e.what()<<endl;
     }
+}
+
+void play(MyMap visualmap){
+    system("CLS");
+    cout<<"\e[0mfind this item to add to your collection...\n"<<target.second<<"\n";
+    visualmap.ShowMap();
+    visualmap.menu();
+    int x;
+    cin>>x;
+    while(x<=0||x>(visualmap.maximo+visualmap.submaps.size()+visualmap.submaps.size()+1)){
+        cout<<"\tComando invalido\n\t\t\t\t_";
+        cin>>x;
+    }
+    if(x==visualmap.maximo+visualmap.submaps.size()+visualmap.submaps.size()+1) return;
+    if(visualmap.submaps.size()==0){
+        if(x == visualmap.ubicacion){
+            if(target.first == visualmap.item) ganaste();
+            else{
+                 cout<<"\n"<<itemtostring(visualmap.item)<<"\n\tNo es lo que estas buscando...\n";
+                 cin.ignore();
+                 cin.ignore();
+            }
+        }
+        else cout<<"\n\tNo hay nada aqui, intenta otra vez...\n";
+    }
+    else{
+        if(x>visualmap.submaps.size()) play(*mapDirectory[visualmap.supermaps[0]]);
+        else play(*mapDirectory[visualmap.submaps[x-1]]);
+    }
+    return;
 }
