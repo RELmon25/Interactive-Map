@@ -50,6 +50,8 @@ MyMap IT_Office("IT_Office");
 
 map<string,MyMap*> mapDirectory;
 
+string username;
+
 int main(){
     HANDLE handleOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD consoleMode;
@@ -62,7 +64,6 @@ int main(){
     itemManagement();
     
     MyMap tittle("Tittle");
-    string username;
     int x;
     while(true){
         system ("CLS");
@@ -149,11 +150,18 @@ void showCollection(){
 }
 
 void ganaste(){
+    system("CLS");
+    ofstream file;
+    file.open(username+".txt",ios::app);
+    file<<endl<<target.first;
+    file.close();
     collectionSet.insert(target.first);
     MyMap felicidades("Felicidades");
     felicidades.ShowMap();
-    cout<<"\n"<<itemtostring<<"\n";
-    system("PAUSE");
+    cout<<"\n\tYOU FOUND IT!\n"<<target.second<<"\n";
+    cout<<"\e[34mPress Enter to return to Main Menu_";
+    cin.ignore();
+    cin.ignore();
     return;
 }
 
@@ -271,7 +279,7 @@ pair<int,string> randomItem(){
     int x;
     do{
         x = rand() % 20+1;
-    }while(collectionSet.count(x)>0);
+    }while(collectionSet.count(x)!=0);
     s = itemtostring(x);
     pair<int,string> p = {x,s};
     return p;
@@ -344,12 +352,23 @@ void play(MyMap visualmap){
         if(x == visualmap.ubicacion){
             if(target.first == visualmap.item) ganaste();
             else{
-                 cout<<"\n"<<itemtostring(visualmap.item)<<"\n\tNo es lo que estas buscando...\n";
+                system("CLS");
+                string s = itemtostring(visualmap.item);
+                 cout<<"\e[0m\n"<<s<<"\n\tNo es lo que estas buscando...\n";
+                 cout<<"\e[34mPress Enter to return_";
                  cin.ignore();
                  cin.ignore();
+                 play(visualmap);
             }
         }
-        else cout<<"\n\tNo hay nada aqui, intenta otra vez...\n";
+        else{
+            system("CLS"); 
+            cout<<"\e[0m\n\tThere is nothing here\n\tTry Again...\n";
+            cout<<"\e[34mPress Enter to return_";
+            cin.ignore();
+            cin.ignore();
+            play(visualmap);
+        }
     }
     else{
         if(x>visualmap.submaps.size()) play(*mapDirectory[visualmap.supermaps[0]]);
