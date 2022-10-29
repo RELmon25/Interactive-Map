@@ -278,7 +278,7 @@ pair<int,string> randomItem(){
     string s = "";
     int x;
     do{
-        x = rand() % 20+1;
+        x = rand() % 19 + 1;
     }while(collectionSet.count(x)!=0);
     s = itemtostring(x);
     pair<int,string> p = {x,s};
@@ -343,12 +343,12 @@ void play(MyMap visualmap){
     visualmap.menu();
     int x;
     cin>>x;
-    while(x<=0||x>(visualmap.maximo+visualmap.submaps.size()+visualmap.submaps.size()+1)){
+    while(x<=0||x>(visualmap.maximo+visualmap.submaps.size()+visualmap.supermaps.size()+1)){
         cout<<"\tComando invalido\n\t\t\t\t_";
         cin>>x;
     }
-    if(x==visualmap.maximo+visualmap.submaps.size()+visualmap.submaps.size()+1) return;
-    if(visualmap.submaps.size()==0){
+    if(x==visualmap.maximo+visualmap.submaps.size()+visualmap.supermaps.size()+1) return;
+    if(visualmap.submaps.size()==0&&x<=visualmap.maximo){
         if(x == visualmap.ubicacion){
             if(target.first == visualmap.item) ganaste();
             else{
@@ -362,16 +362,16 @@ void play(MyMap visualmap){
             }
         }
         else{
-            system("CLS"); 
-            cout<<"\e[0m\n\tThere is nothing here\n\tTry Again...\n";
-            cout<<"\e[34mPress Enter to return_";
-            cin.ignore();
-            cin.ignore();
-            play(visualmap);
+                system("CLS"); 
+                cout<<"\e[0m\n\tThere is nothing here\n\tTry Again...\n";
+                cout<<"\e[34mPress Enter to return_";
+                cin.ignore();
+                cin.ignore();
+                play(visualmap);
         }
     }
     else{
-        if(x>visualmap.submaps.size()) play(*mapDirectory[visualmap.supermaps[0]]);
+        if(x>visualmap.submaps.size()+visualmap.maximo) play(*mapDirectory[visualmap.supermaps[0]]);
         else play(*mapDirectory[visualmap.submaps[x-1]]);
     }
     return;
