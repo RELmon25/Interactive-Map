@@ -1,5 +1,5 @@
 # Interactive-Map
-This is a project tha I designed for my class of Advanced Programming. Below is the link of the ejecution.
+This is a project that I designed for my Advanced Programming class. Below is the link of the ejecution.
 
 
 https://drive.google.com/file/d/1IHxVX7plBM75XpqyUP1LXFCA0oJT190Y/view?usp=share_link
